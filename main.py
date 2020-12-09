@@ -6,7 +6,7 @@ file_path_1 = os.path.join(os.getcwd(), 'newsafr.xml')
 file_path_2 = os.path.join(os.getcwd(), 'newsafr.json')
 
 
-def find_10_most_common_words(file):
+def find_10_most_common_words(file, word_lenght=6, top_lenght=10):
     list_of_descr = []
 
     def xml_find_every_description():
@@ -30,9 +30,6 @@ def find_10_most_common_words(file):
         list_of_words_in_descr = []
         set_of_descr = set()
         dict_frequency_of_occurrences = {}
-        dict_top_of_frequency_of_occurrences = {}
-        dict_with_deleted_top_of_frequency_of_occurrences = {}
-        list_numerated_top_of_frequency_of_occurrences = []
 
         for one_descr in list_of_descr:
             one_split_decr = one_descr.split()
@@ -40,23 +37,20 @@ def find_10_most_common_words(file):
                 list_of_words_in_descr.append(every_word)
 
         for one_word in list_of_words_in_descr:
-            if len(one_word) > 6:
+            if len(one_word) > word_lenght:
                 set_of_descr.add(one_word)
 
-        for one_elem in set_of_descr:
-            entry = list_of_words_in_descr.count(one_elem)
-            dict_frequency_of_occurrences.setdefault(one_elem, entry)
+        for word in list_of_words_in_descr:
+            if len(word) > word_lenght:
+                if word not in dict_frequency_of_occurrences.keys():
+                    dict_frequency_of_occurrences[word] = 1
+                else:
+                    dict_frequency_of_occurrences[word] += 1
 
-        dict_with_deleted_top_of_frequency_of_occurrences = dict_frequency_of_occurrences.copy()
-
-        for top in range(10):
-            most_common_word = max(dict_with_deleted_top_of_frequency_of_occurrences, key=dict_with_deleted_top_of_frequency_of_occurrences.get)
-            for word, frequency in dict_frequency_of_occurrences.items():
-                if word == most_common_word:
-                    list_numerated_top_of_frequency_of_occurrences.append(f'{word}:{frequency}')
-                    del dict_with_deleted_top_of_frequency_of_occurrences[most_common_word]
-
-        print(list_numerated_top_of_frequency_of_occurrences)
+        list_top_of_frequency = list(dict_frequency_of_occurrences.items())
+        list_top_of_frequency.sort(key=lambda i: -i[1])
+        for i in list_top_of_frequency[0:top_lenght]:
+            print(f'{i[0]}:{i[1]}')
 
     if 'xml' in file:
         xml_find_every_description()
@@ -66,4 +60,4 @@ def find_10_most_common_words(file):
 
 
 find_10_most_common_words(file_path_1)
-# find_10_most_common_words(file_path_2)
+# find_10_most_common_words(file_path_2, 8, 5)
